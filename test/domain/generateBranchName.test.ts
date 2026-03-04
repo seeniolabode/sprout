@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { generateBranchName } from "../../src/domain/generateBranchName.js"
+import { generateBranchName } from "../../src/domain/generateBranchName"
 
 describe("generateBranchName", () => {
   it("creates jira branch names with issue key for normal intents", () => {
