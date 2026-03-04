@@ -240,7 +240,15 @@ Test cases must include:
 - empty descriptions
 - correct branch formatting
 
-Adapters do not require extensive testing in v1.
+## Minimal adapter tests (required)
+- Jira mapping/normalization must be unit-tested:
+  - multiple issues
+  - missing summary or unexpected shapes (defined behavior: throw AppError or fallback)
+  - empty issues array
+- No network calls in unit tests.
+
+Adapters do not require extensive *integration* testing in v1 (avoid heavy HTTP mocking),
+but any pure adapter logic (e.g., Jira response mapping/normalization) MUST have unit tests.
 
 ---
 

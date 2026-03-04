@@ -1,5 +1,5 @@
 import { slugify } from "./slugify";
-import { type BranchInput } from "./types";
+import type { BranchInput } from "./types";
 
 function sanitizeReleaseVersion(version: string): string {
 	return version
