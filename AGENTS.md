@@ -250,6 +250,9 @@ Test cases must include:
 Adapters do not require extensive *integration* testing in v1 (avoid heavy HTTP mocking),
 but any pure adapter logic (e.g., Jira response mapping/normalization) MUST have unit tests.
 
+Git adapter tests should mock the command runner (execa).
+Do not execute real git commands in unit tests.
+
 ---
 
 # Development Workflow
