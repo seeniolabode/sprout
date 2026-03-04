@@ -47,7 +47,7 @@ describe("fetchAssignedJiraTickets", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const [url, init] = fetchMock.mock.calls[0] as [URL, RequestInit]
 
-    expect(url.toString()).toContain("/rest/api/3/search?")
+    expect(url.toString()).toContain("/rest/api/3/search/jql?")
     expect(url.searchParams.get("jql")).toBe(
       "assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC"
     )
@@ -128,7 +128,7 @@ describe("fetchAssignedJiraTickets", () => {
 
     globalThis.fetch = fetchMock as unknown as typeof fetch
 
-    await fetchAssignedJiraTickets(createEnv({ SPROUT_DEBUG: "true" }))
+    await fetchAssignedJiraTickets(createEnv({ JIRA_DEBUG: "true" }))
 
     expect(logSpy).toHaveBeenCalledTimes(2)
     expect(logSpy.mock.calls[0]?.[0]).toContain("[sprout:jira] GET")

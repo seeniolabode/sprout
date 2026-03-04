@@ -1,3 +1,5 @@
+import "dotenv/config"
+
 import { Command } from "commander"
 
 import { runCustomCommand } from "./commands/custom"
@@ -45,7 +47,7 @@ async function main(): Promise<void> {
 
 function isDebugEnabled(): boolean {
   const runtime = getRuntimeProcess()
-  const value = runtime?.env?.SPROUT_DEBUG
+  const value = runtime?.env?.JIRA_DEBUG ?? runtime?.env?.SPROUT_DEBUG
 
   return value === "1" || value === "true"
 }

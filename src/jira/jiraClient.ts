@@ -1,7 +1,7 @@
-import { type JiraTicket } from "../domain/types"
-import { ERROR_CODES, createError } from "../shared/errors"
+import type { JiraTicket } from "../domain/types"
+import { createError, ERROR_CODES } from "../shared/errors"
 import { mapJiraSearchResponse } from "./jiraMapper"
-import { DEFAULT_JIRA_LIMIT, buildJiraSearchParams } from "./jql"
+import { buildJiraSearchParams, DEFAULT_JIRA_LIMIT } from "./jql"
 
 type JiraConfig = {
   baseUrl: string
@@ -16,7 +16,7 @@ type JiraEnv = Record<string, string | undefined>
 
 export async function fetchAssignedJiraTickets(env: JiraEnv = readRuntimeEnv()): Promise<JiraTicket[]> {
   const config = readJiraConfig(env)
-  const url = new URL("/rest/api/3/search", normalizeBaseUrl(config.baseUrl))
+  const url = new URL("/rest/api/3/search/jql", normalizeBaseUrl(config.baseUrl))
 
   url.search = buildJiraSearchParams({
     jql: config.jql,
@@ -97,7 +97,11 @@ function readJiraConfig(env: JiraEnv): JiraConfig {
     apiToken,
     jql: env.JIRA_JQL?.trim() || undefined,
     limit,
-    debug: env.SPROUT_DEBUG === "1" || env.SPROUT_DEBUG === "true"
+    debug:
+      env.JIRA_DEBUG === "1" ||
+      env.JIRA_DEBUG === "true" ||
+      env.SPROUT_DEBUG === "1" ||
+      env.SPROUT_DEBUG === "true"
   }
 }
 
