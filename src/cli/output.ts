@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../shared/errors"
+import { ERROR_CODES } from "../shared/errors.js"
 
 export function printBranchPreview(branchName: string): void {
   console.log(`Branch preview: ${branchName}`)

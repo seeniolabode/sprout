@@ -1,10 +1,11 @@
+#!/usr/bin/env node
 import "dotenv/config"
 
 import { Command } from "commander"
 
-import { runCustomCommand } from "./commands/custom"
-import { runJiraCommand } from "./commands/jira"
-import { isCancelledError, printError } from "./output"
+import { runCustomCommand } from "./commands/custom.js"
+import { runJiraCommand } from "./commands/jira.js"
+import { isCancelledError, printError } from "./output.js"
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command()

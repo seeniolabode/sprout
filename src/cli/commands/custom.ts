@@ -1,7 +1,7 @@
-import { generateBranchName } from "../../domain/generateBranchName"
-import { createBranch } from "../../git/gitClient"
-import { confirmBranchCreation, editBranchName, inputDescription, selectIntent } from "../prompts"
-import { printBranchPreview, printSuccess } from "../output"
+import { generateBranchName } from "../../domain/generateBranchName.js"
+import { createBranch } from "../../git/gitClient.js"
+import { confirmBranchCreation, editBranchName, inputDescription, selectIntent } from "../prompts.js"
+import { printBranchPreview, printSuccess } from "../output.js"
 
 export async function runCustomCommand(): Promise<void> {
   const intent = await selectIntent()

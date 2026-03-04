@@ -1,23 +1,29 @@
 {
-  "name": "sprout",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "cli": "tsx src/cli/index.ts"
-  },
-  "devDependencies": {
-    "@types/prompts": "^2.4.9",
-    "tsx": "^4.21.0",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.4"
-  },
-  "dependencies": {
-    "commander": "^14.0.3",
-    "dotenv": "^17.3.1",
-    "execa": "^9.6.1",
-    "prompts": "^2.4.2"
-  }
+	"name": "sprout",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"bin": {
+		"sprout": "./dist/cli/index.js"
+	},
+	"scripts": {
+		"clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\"",
+		"typecheck": "tsc --noEmit",
+		"build": "npm run clean && tsc",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"cli": "tsx src/cli/index.ts"
+	},
+	"devDependencies": {
+		"@types/prompts": "^2.4.9",
+		"tsx": "^4.21.0",
+		"typescript": "^5.6.3",
+		"vitest": "^2.1.4"
+	},
+	"dependencies": {
+		"commander": "^14.0.3",
+		"dotenv": "^17.3.1",
+		"execa": "^9.6.1",
+		"prompts": "^2.4.2"
+	}
 }

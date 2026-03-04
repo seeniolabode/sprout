@@ -1,5 +1,5 @@
-import { type JiraTicket } from "../domain/types"
-import { ERROR_CODES, createError } from "../shared/errors"
+import { type JiraTicket } from "../domain/types.js"
+import { ERROR_CODES, createError } from "../shared/errors.js"
 
 type JiraIssue = {
   key?: unknown

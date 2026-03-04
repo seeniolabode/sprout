@@ -1,6 +1,6 @@
 import { execa } from "execa"
 
-import { ERROR_CODES, createError } from "../shared/errors"
+import { ERROR_CODES, createError } from "../shared/errors.js"
 
 export async function assertInsideRepo(): Promise<void> {
   try {

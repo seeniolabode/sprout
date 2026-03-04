@@ -1,7 +1,7 @@
 import { execa } from "execa"
 
-import { ERROR_CODES, createError } from "../shared/errors"
-import { assertInsideRepo, branchExists } from "./repo"
+import { ERROR_CODES, createError } from "../shared/errors.js"
+import { assertInsideRepo, branchExists } from "./repo.js"
 
 export async function createBranch(branchName: string): Promise<void> {
   await assertInsideRepo()

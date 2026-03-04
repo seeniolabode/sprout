@@ -1,13 +1,13 @@
-import { generateBranchName } from "../../domain/generateBranchName"
-import { createBranch } from "../../git/gitClient"
-import { fetchAssignedJiraTickets } from "../../jira/jiraClient"
+import { generateBranchName } from "../../domain/generateBranchName.js"
+import { createBranch } from "../../git/gitClient.js"
+import { fetchAssignedJiraTickets } from "../../jira/jiraClient.js"
 import {
   confirmBranchCreation,
   editBranchName,
   selectIntent,
   selectTicket
-} from "../prompts"
-import { printBranchPreview, printSuccess } from "../output"
+} from "../prompts.js"
+import { printBranchPreview, printSuccess } from "../output.js"
 
 export async function runJiraCommand(): Promise<void> {
   const tickets = await fetchAssignedJiraTickets()

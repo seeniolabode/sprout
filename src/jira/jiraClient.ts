@@ -1,7 +1,7 @@
-import type { JiraTicket } from "../domain/types"
-import { createError, ERROR_CODES } from "../shared/errors"
-import { mapJiraSearchResponse } from "./jiraMapper"
-import { buildJiraSearchParams, DEFAULT_JIRA_LIMIT } from "./jql"
+import type { JiraTicket } from "../domain/types.js"
+import { createError, ERROR_CODES } from "../shared/errors.js"
+import { mapJiraSearchResponse } from "./jiraMapper.js"
+import { buildJiraSearchParams, DEFAULT_JIRA_LIMIT } from "./jql.js"
 
 type JiraConfig = {
   baseUrl: string

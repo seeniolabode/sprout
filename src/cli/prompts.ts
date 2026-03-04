@@ -1,7 +1,7 @@
 import prompts, { type PromptObject } from "prompts"
 
-import { BRANCH_INTENTS, type BranchIntent, type JiraTicket } from "../domain/types"
-import { ERROR_CODES, createError } from "../shared/errors"
+import { BRANCH_INTENTS, type BranchIntent, type JiraTicket } from "../domain/types.js"
+import { ERROR_CODES, createError } from "../shared/errors.js"
 
 type PromptValue<T> = T | undefined
 
