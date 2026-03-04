@@ -4,15 +4,23 @@ import "dotenv/config"
 import { Command } from "commander"
 
 import { runCustomCommand } from "./commands/custom.js"
+import { runInitCommand } from "./commands/init.js"
 import { runJiraCommand } from "./commands/jira.js"
 import { isCancelledError, printError } from "./output.js"
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command()
 
+  program.name("sprout").description("Create git branches from Jira tickets or manual input")
+
   program
-    .name("sprout")
-    .description("Create git branches from Jira tickets or manual input")
+    .command("init")
+    .description("Initialize global Sprout configuration")
+    .action(async () => {
+      await runInitCommand()
+    })
+
+  program
     .option("-c, --custom", "Use custom mode")
     .action(async (options: { custom?: boolean }) => {
       if (options.custom) {
@@ -29,7 +37,6 @@ export async function runCli(argv: string[]): Promise<void> {
 async function main(): Promise<void> {
   const runtime = getRuntimeProcess()
   const argv = runtime?.argv ?? []
-  const debug = isDebugEnabled()
 
   try {
     await runCli(argv)
@@ -39,25 +46,16 @@ async function main(): Promise<void> {
       return
     }
 
-    printError(error, debug)
+    printError(error, false)
     if (runtime) {
       runtime.exitCode = 1
     }
   }
 }
 
-function isDebugEnabled(): boolean {
-  const runtime = getRuntimeProcess()
-  const value = runtime?.env?.JIRA_DEBUG ?? runtime?.env?.SPROUT_DEBUG
-
-  return value === "1" || value === "true"
-}
-
-function getRuntimeProcess():
-  | { argv?: string[]; env?: Record<string, string | undefined>; exitCode?: number }
-  | undefined {
+function getRuntimeProcess(): { argv?: string[]; exitCode?: number } | undefined {
   const globalRuntime = globalThis as {
-    process?: { argv?: string[]; env?: Record<string, string | undefined>; exitCode?: number }
+    process?: { argv?: string[]; exitCode?: number }
   }
 
   return globalRuntime.process

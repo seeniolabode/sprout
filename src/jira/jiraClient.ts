@@ -1,21 +1,10 @@
+import type { JiraConfig } from "../config/types.js"
 import type { JiraTicket } from "../domain/types.js"
 import { createError, ERROR_CODES } from "../shared/errors.js"
 import { mapJiraSearchResponse } from "./jiraMapper.js"
-import { buildJiraSearchParams, DEFAULT_JIRA_LIMIT } from "./jql.js"
+import { buildJiraSearchParams } from "./jql.js"
 
-type JiraConfig = {
-  baseUrl: string
-  email: string
-  apiToken: string
-  jql?: string
-  limit: number
-  debug: boolean
-}
-
-type JiraEnv = Record<string, string | undefined>
-
-export async function fetchAssignedJiraTickets(env: JiraEnv = readRuntimeEnv()): Promise<JiraTicket[]> {
-  const config = readJiraConfig(env)
+export async function fetchAssignedJiraTickets(config: JiraConfig): Promise<JiraTicket[]> {
   const url = new URL("/rest/api/3/search/jql", normalizeBaseUrl(config.baseUrl))
 
   url.search = buildJiraSearchParams({
@@ -71,40 +60,6 @@ export async function fetchAssignedJiraTickets(env: JiraEnv = readRuntimeEnv()):
   return tickets
 }
 
-function readJiraConfig(env: JiraEnv): JiraConfig {
-  const missing: string[] = []
-
-  const baseUrl = env.JIRA_BASE_URL?.trim() ?? ""
-  const email = env.JIRA_EMAIL?.trim() ?? ""
-  const apiToken = env.JIRA_API_TOKEN?.trim() ?? ""
-
-  if (!baseUrl) missing.push("JIRA_BASE_URL")
-  if (!email) missing.push("JIRA_EMAIL")
-  if (!apiToken) missing.push("JIRA_API_TOKEN")
-
-  if (missing.length > 0) {
-    throw createError(
-      ERROR_CODES.MISSING_ENV,
-      `Missing required environment variable(s): ${missing.join(", ")}`
-    )
-  }
-
-  const limit = parseLimit(env.JIRA_LIMIT)
-
-  return {
-    baseUrl,
-    email,
-    apiToken,
-    jql: env.JIRA_JQL?.trim() || undefined,
-    limit,
-    debug:
-      env.JIRA_DEBUG === "1" ||
-      env.JIRA_DEBUG === "true" ||
-      env.SPROUT_DEBUG === "1" ||
-      env.SPROUT_DEBUG === "true"
-  }
-}
-
 function normalizeBaseUrl(baseUrl: string): string {
   const normalized = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`
 
@@ -115,24 +70,6 @@ function normalizeBaseUrl(baseUrl: string): string {
   }
 }
 
-function parseLimit(value: string | undefined): number {
-  if (!value) {
-    return DEFAULT_JIRA_LIMIT
-  }
-
-  const parsed = Number(value)
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    return DEFAULT_JIRA_LIMIT
-  }
-
-  return parsed
-}
-
 function encodeBasicAuth(email: string, token: string): string {
   return btoa(`${email}:${token}`)
-}
-
-function readRuntimeEnv(): JiraEnv {
-  const runtime = globalThis as { process?: { env?: JiraEnv } }
-  return runtime.process?.env ?? {}
 }

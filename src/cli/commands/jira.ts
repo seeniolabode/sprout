@@ -1,3 +1,4 @@
+import { ensureJiraConfig, loadConfig } from "../../config/loadConfig.js"
 import { generateBranchName } from "../../domain/generateBranchName.js"
 import { createBranch } from "../../git/gitClient.js"
 import { fetchAssignedJiraTickets } from "../../jira/jiraClient.js"
@@ -10,7 +11,10 @@ import {
 import { printBranchPreview, printSuccess } from "../output.js"
 
 export async function runJiraCommand(): Promise<void> {
-  const tickets = await fetchAssignedJiraTickets()
+  const config = await loadConfig()
+  const jiraConfig = ensureJiraConfig(config)
+
+  const tickets = await fetchAssignedJiraTickets(jiraConfig)
   const ticket = await selectTicket(tickets)
   const intent = await selectIntent()
 

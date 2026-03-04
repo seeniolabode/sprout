@@ -27,6 +27,8 @@ function toUserMessage(error: unknown): string {
   switch (code) {
     case ERROR_CODES.USER_CANCELLED:
       return "Cancelled."
+    case ERROR_CODES.CONFIG_NOT_FOUND:
+      return "Sprout configuration not found. Run `sprout init` to set up your Jira credentials."
     case ERROR_CODES.MISSING_ENV:
       return "Missing required Jira configuration."
     case ERROR_CODES.AUTH_FAILED:
