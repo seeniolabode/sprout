@@ -8,13 +8,17 @@ import {
   selectIntent,
   selectTicket
 } from "../prompts.js"
-import { printBranchPreview, printSuccess } from "../output.js"
+import { printBranchPreview, withSpinner } from "../output.js"
 
 export async function runJiraCommand(): Promise<void> {
   const config = await loadConfig()
   const jiraConfig = ensureJiraConfig(config)
 
-  const tickets = await fetchAssignedJiraTickets(jiraConfig)
+  const tickets = await withSpinner(
+    "Fetching Jira tickets...",
+    async () => fetchAssignedJiraTickets(jiraConfig),
+    "Fetched Jira tickets"
+  )
   const ticket = await selectTicket(tickets)
   const intent = await selectIntent()
 
@@ -32,6 +36,9 @@ export async function runJiraCommand(): Promise<void> {
     return
   }
 
-  await createBranch(branchName)
-  printSuccess(branchName)
+  await withSpinner(
+    `Creating branch ${branchName}...`,
+    async () => createBranch(branchName),
+    `Created branch ${branchName}`
+  )
 }

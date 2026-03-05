@@ -1,7 +1,7 @@
 import { generateBranchName } from "../../domain/generateBranchName.js"
 import { createBranch } from "../../git/gitClient.js"
 import { confirmBranchCreation, editBranchName, inputDescription, selectIntent } from "../prompts.js"
-import { printBranchPreview, printSuccess } from "../output.js"
+import { printBranchPreview, withSpinner } from "../output.js"
 
 export async function runCustomCommand(): Promise<void> {
   const intent = await selectIntent()
@@ -20,6 +20,9 @@ export async function runCustomCommand(): Promise<void> {
     return
   }
 
-  await createBranch(branchName)
-  printSuccess(branchName)
+  await withSpinner(
+    `Creating branch ${branchName}...`,
+    async () => createBranch(branchName),
+    `Created branch ${branchName}`
+  )
 }

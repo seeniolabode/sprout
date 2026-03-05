@@ -6,6 +6,7 @@ import prompts from "prompts"
 
 import { getGlobalConfigPath } from "../../config/loadConfig.js"
 import { createError, ERROR_CODES } from "../../shared/errors.js"
+import { printWarning, withSpinner } from "../output.js"
 
 type InitAnswers = {
   baseUrl: string
@@ -37,23 +38,27 @@ export async function runInitCommand(): Promise<void> {
     }
   }
 
-  await mkdir(path.dirname(configPath), { recursive: true, mode: 0o700 })
-  await writeFile(configPath, `${JSON.stringify(payload, null, 2)}\n`, { mode: 0o600 })
+  await withSpinner(
+    "Saving global configuration...",
+    async () => {
+      await mkdir(path.dirname(configPath), { recursive: true, mode: 0o700 })
+      await writeFile(configPath, `${JSON.stringify(payload, null, 2)}\n`, { mode: 0o600 })
 
-  try {
-    await chmod(configPath, 0o600)
-  } catch {
-    // Best effort for platforms that do not support POSIX permission bits.
-  }
-
-  console.log(`Wrote global config: ${configPath}`)
+      try {
+        await chmod(configPath, 0o600)
+      } catch {
+        // Best effort for platforms that do not support POSIX permission bits.
+      }
+    },
+    `Saved global configuration to ${configPath}`
+  )
 }
 
 async function shouldWriteConfig(configPath: string): Promise<boolean> {
   try {
     await access(configPath, constants.F_OK)
 
-    console.log(`Config already exists at ${configPath}`)
+    printWarning(`Config already exists at ${configPath}`)
     const overwrite = await promptConfirm("Overwrite existing config?", false)
 
     return overwrite

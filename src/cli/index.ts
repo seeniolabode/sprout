@@ -6,7 +6,7 @@ import { Command } from "commander"
 import { runCustomCommand } from "./commands/custom.js"
 import { runInitCommand } from "./commands/init.js"
 import { runJiraCommand } from "./commands/jira.js"
-import { isCancelledError, printError } from "./output.js"
+import { isCancelledError, printError, printWarning } from "./output.js"
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command()
@@ -37,25 +37,35 @@ export async function runCli(argv: string[]): Promise<void> {
 async function main(): Promise<void> {
   const runtime = getRuntimeProcess()
   const argv = runtime?.argv ?? []
+  const debug = isDebugEnabled()
 
   try {
     await runCli(argv)
   } catch (error) {
     if (isCancelledError(error)) {
-      console.log("Cancelled.")
+      printWarning("Cancelled.")
       return
     }
 
-    printError(error, false)
+    printError(error, debug)
     if (runtime) {
       runtime.exitCode = 1
     }
   }
 }
 
-function getRuntimeProcess(): { argv?: string[]; exitCode?: number } | undefined {
+function isDebugEnabled(): boolean {
+  const runtime = getRuntimeProcess()
+  const value = runtime?.env?.JIRA_DEBUG
+
+  return value === "1" || value === "true"
+}
+
+function getRuntimeProcess():
+  | { argv?: string[]; env?: Record<string, string | undefined>; exitCode?: number }
+  | undefined {
   const globalRuntime = globalThis as {
-    process?: { argv?: string[]; exitCode?: number }
+    process?: { argv?: string[]; env?: Record<string, string | undefined>; exitCode?: number }
   }
 
   return globalRuntime.process

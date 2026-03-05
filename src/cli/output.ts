@@ -1,16 +1,42 @@
+import ora from "ora"
+
 import { ERROR_CODES } from "../shared/errors.js"
 
 export function printBranchPreview(branchName: string): void {
+  console.log("")
   console.log(`Branch preview: ${branchName}`)
+  console.log("")
 }
 
-export function printSuccess(branchName: string): void {
-  console.log(`Created branch: ${branchName}`)
+export function printSuccess(message: string): void {
+  console.log(`✔ ${message}`)
+}
+
+export function printWarning(message: string): void {
+  console.log(`⚠ ${message}`)
+}
+
+export async function withSpinner<T>(
+  loadingText: string,
+  task: () => Promise<T>,
+  successText: string
+): Promise<T> {
+  const spinner = ora(loadingText).start()
+
+  try {
+    const result = await task()
+    spinner.succeed(successText)
+    return result
+  } catch (error) {
+    spinner.stop()
+    throw error
+  }
 }
 
 export function printError(error: unknown, debug: boolean): void {
   const message = toUserMessage(error)
-  console.error(message)
+  const prefix = isWarningCode(readErrorCode(error)) ? "⚠" : "✖"
+  console.error(`${prefix} ${message}`)
 
   if (debug && error instanceof Error && error.stack) {
     console.error(error.stack)
@@ -32,13 +58,13 @@ function toUserMessage(error: unknown): string {
     case ERROR_CODES.MISSING_ENV:
       return "Missing required Jira configuration."
     case ERROR_CODES.AUTH_FAILED:
-      return "Jira authentication failed. Check Jira credentials."
+      return "Jira authentication failed. Check your credentials or run `sprout init`."
     case ERROR_CODES.NETWORK_ERROR:
       return "Could not connect to Jira."
     case ERROR_CODES.INVALID_JIRA_RESPONSE:
       return "Unexpected response from Jira."
     case ERROR_CODES.NO_TICKETS:
-      return "No assigned Jira tickets found."
+      return "No Jira tickets assigned to you."
     case ERROR_CODES.JIRA_REQUEST_FAILED:
       return "Jira request failed."
     case ERROR_CODES.NOT_GIT_REPO:
@@ -54,6 +80,10 @@ function toUserMessage(error: unknown): string {
 
       return "Something went wrong."
   }
+}
+
+function isWarningCode(code: string | undefined): boolean {
+  return code === ERROR_CODES.NO_TICKETS
 }
 
 function readErrorCode(error: unknown): string | undefined {
